@@ -103,6 +103,10 @@ export default (props) => {
             onRowUpdated={onRowUpdated}
             onRowRemoved={onRowRemoved}
             hoverStateEnabled={true}
+            export={{
+                enabled: true,
+                fileName: new Date().valueOf()
+            }}
         />
     )
 };
