@@ -53,3 +53,31 @@ export const updateColumns = (columns = []) => {
     }));
     window.localStorage.setItem('data', JSON.stringify(newDataSource));
 };
+
+export const updateDataSource = (data, type = 'update') => {
+    const dataSource = getDataSource();
+    const index = dataSource.findIndex(el => el.id === data.id);
+    let updated = false;
+
+    switch (type) {
+        case 'update': {
+            dataSource[index] = data;
+            updated = true;
+            break;
+        }
+        case 'delete': {
+            dataSource.splice(index, 1);
+            updated = true;
+            break;
+        }
+        case 'insert': {
+            dataSource.push({ id: data['__KEY__'], ...data });
+            updated = true;
+            break;
+        }
+    };
+
+    if (updated) {
+        window.localStorage.setItem('data', JSON.stringify(dataSource));
+    }
+};

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { DataGrid } from 'devextreme-react';
-import { getHeaderHeight, getCurrentDate, getColumns, updateColumns } from '../../helpers';
+import { getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from '../../helpers';
 import './styles.css';
 
 export default (props) => {
@@ -12,10 +12,22 @@ export default (props) => {
         const dataField = currDate.replace(/\./g, '');
 
         if (columns.findIndex(el => el.dataField === dataField) < 0) {
-            columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 120, dataType: 'boolean' });
+            columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
             updateColumns(columns);
             props.getGridData();
         }
+    };
+
+    const onRowInserted = (e) => {
+        updateDataSource(e.data, 'insert');
+    };
+
+    const onRowRemoved = (e) => {
+        updateDataSource(e.data, 'delete');
+    };
+
+    const onRowUpdated = (e) => {
+        updateDataSource(e.data);
     };
 
     const onToolbarItemClick = e => {
@@ -87,6 +99,10 @@ export default (props) => {
                 allowUpdating: true,
                 useIcons: true
             }}
+            onRowInserted={onRowInserted}
+            onRowUpdated={onRowUpdated}
+            onRowRemoved={onRowRemoved}
+            hoverStateEnabled={true}
         />
     )
 };
