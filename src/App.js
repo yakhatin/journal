@@ -6,6 +6,7 @@ import './App.css';
 
 function App() {
   const [opened, setOpened] = useState(false);
+  const [headerRendered, setHeaderRendered] = useState(false);
 
   const setOpenedCallBack = () => {
     setOpened(opened => !opened);
@@ -13,10 +14,14 @@ function App() {
 
   return (
     <React.Fragment>
-      <Header setOpenedCallBack={setOpenedCallBack} />
-      <Menu opened={opened}>
-        <Grid />
-      </Menu>
+      <Header
+        setOpenedCallBack={setOpenedCallBack}
+        setHeaderRendered={setHeaderRendered} />
+      {headerRendered &&
+        <Menu opened={opened} >
+          <Grid />
+        </Menu>
+      }
     </React.Fragment>
   );
 }

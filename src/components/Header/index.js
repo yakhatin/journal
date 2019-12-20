@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Toolbar } from "devextreme-react";
 import './styles.css';
 
@@ -17,7 +17,11 @@ export default (props) => {
             text: 'Журнал'
         }
     ];
-    
+
+    useEffect(() => {
+        props.setHeaderRendered(true);
+    }, []);
+
     return (
         <Toolbar
             className={'header-container'}
