@@ -3,10 +3,25 @@ import Menu from './components/Menu';
 import Header from './components/Header';
 import Grid from './components/Grid';
 import './App.css';
+import { getDataSource, getColumns } from './helpers';
 
 function App() {
   const [opened, setOpened] = useState(false);
   const [headerRendered, setHeaderRendered] = useState(false);
+  const [columns, setColumns] = useState(undefined);
+  const [dataSource, setDataSource] = useState(undefined);
+  const [refreshData, setRefreshData] = useState(false);
+
+  const getGridData = () => {
+    const columns = getColumns();
+    const data = getDataSource();
+    setColumns(columns);
+    setDataSource(data);
+  }
+
+  useState(() => {
+    getGridData();
+  }, []);
 
   const setOpenedCallBack = () => {
     setOpened(opened => !opened);
@@ -17,9 +32,12 @@ function App() {
       <Header
         setOpenedCallBack={setOpenedCallBack}
         setHeaderRendered={setHeaderRendered} />
-      {headerRendered &&
+      {headerRendered && dataSource && columns &&
         <Menu opened={opened} >
-          <Grid />
+          <Grid
+            dataSource={dataSource}
+            columns={columns}
+            getGridData={getGridData} />
         </Menu>
       }
     </React.Fragment>
