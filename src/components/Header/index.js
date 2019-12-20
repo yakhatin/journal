@@ -2,14 +2,14 @@ import React from 'react';
 import { Toolbar } from "devextreme-react";
 import './styles.css';
 
-export default () => {
+export default (props) => {
     const toolbarItems = [
         {
             location: 'before',
             widget: 'dxButton',
             options: {
                 icon: 'menu',
-                onClick: () => console.log(321)
+                onClick: props.setOpenedCallBack
             }
         },
         {
