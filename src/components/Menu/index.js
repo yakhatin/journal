@@ -11,6 +11,10 @@ export default (props) => {
         return <NavigationList showSubjectDialog={setSubjectDialogVisible.bind(this, true)} />
     };
 
+    const toogleDialog = () => {
+        setSubjectDialogVisible(value => !value);
+    };
+
     return (
         <React.Fragment>
             <Drawer
@@ -27,7 +31,7 @@ export default (props) => {
                 onHiding={setSubjectDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
-                <Edit />
+                <Edit toogleDialog={toogleDialog} />
             </Dialog>
         </React.Fragment>
     );
