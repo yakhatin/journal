@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, TextBox } from 'devextreme-react';
-import { createGroup } from './helper';
+import { updateGroupData, getGroudData } from './helper';
 
 export default (props) => {
     const [groupId, setGroupId] = useState(null);
     const [groupName, setGroupName] = useState(null);
+    const [dataSource, setDataSource] = useState([]);
 
     useEffect(() => {
         if (props.visible) {
-            setGroupId(new Date().valueOf());
+            setGroupId(props.selectedGroupData ? props.selectedGroupData.id : `group_${new Date().valueOf()}`);
+            if (props.selectedGroupData) {
+                setGroupName(props.selectedGroupData.name);
+                setDataSource(getGroudData(props.selectedGroupData.id));
+            }
         } else {
             setGroupId(null);
             setGroupName(null);
+            setDataSource([]);
         }
     }, [props.visible]);
 
@@ -26,7 +32,23 @@ export default (props) => {
      * @param {*} e - данные из DxDataGrid
      */
     const onRowInserted = (e) => {
-        createGroup(e.data, groupId, groupName)
+        updateGroupData(e.data, groupId, groupName, 'insert')
+    };
+
+    /**
+     * Обработчик события удаления записи
+     * @param {*} e - данные из DxDataGrid
+     */
+    const onRowRemoved = (e) => {
+        updateGroupData(e.data, groupId, groupName, 'delete');
+    };
+
+    /**
+     * Обработчик события изменения записи
+     * @param {*} e - данные из DxDataGrid
+     */
+    const onRowUpdated = (e) => {
+        updateGroupData(e.data, groupId, groupName, 'update');
     };
 
     /**
@@ -57,7 +79,7 @@ export default (props) => {
             <DataGrid
                 onToolbarPreparing={onToolbarPreparing}
                 columns={[{ dataField: 'name', caption: 'ФИО' }]}
-                dataSource={[]}
+                dataSource={dataSource}
                 editing={{
                     mode: 'batch',
                     useIcons: true,
@@ -66,6 +88,8 @@ export default (props) => {
                     allowDeleting: true
                 }}
                 onRowInserted={onRowInserted}
+                onRowRemoved={onRowRemoved}
+                onRowUpdated={onRowUpdated}
             />
         </React.Fragment>
     )

@@ -8,16 +8,40 @@ const addGroup = (id, name) => {
     window.localStorage.setItem('groups', JSON.stringify(storedGroups));
 };
 
-export const createGroup = (data, id, groupName) => {
-    const groupId = `group_${id}`;
+export const getGroudData = (id) => {
+    const storedGroupData = window.localStorage.getItem(id);
+    if (typeof storedGroupData === 'string') {
+        return JSON.parse(storedGroupData);
+    }
+    return [];
+};
+
+export const updateGroupData = (data, groupId, groupName, type) => {
     let storedGroup = [];
     const storedGroupString = window.localStorage.getItem(groupId);
+
     if (typeof storedGroupString === 'string') {
         storedGroup = JSON.parse(storedGroupString);
     } else {
         addGroup(groupId, groupName);
     }
-    storedGroup.push({ id: data['__KEY__'], name: data.name });
+
+    switch (type) {
+        case 'delete': {
+            const index = storedGroup.findIndex(el => el.id === (data.id || data['__KEY__']));
+            storedGroup.splice(index, 1);
+            break;
+        }
+        case 'insert': {
+            storedGroup.push({ id: data['__KEY__'], name: data.name });
+            break;
+        }
+        case 'update': {
+            storedGroup.find(el => el.id === (data.id || data['__KEY__'])).name = data.name;
+            break;
+        }
+    }
+
     window.localStorage.setItem(groupId, JSON.stringify(storedGroup));
 };
 

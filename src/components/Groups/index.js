@@ -6,6 +6,17 @@ import { getGroups } from './helper';
 
 export default (props) => {
     const [addGroupDialogVisible, setAddGroupDialogVisible] = useState(false);
+    const [selectedGroupData, setSelectedGroupData] = useState(null);
+
+    const onAddClick = () => {
+        setSelectedGroupData(null);
+        setAddGroupDialogVisible(true);
+    }
+
+    const onRowDblClick = ({ data }) => {
+        setSelectedGroupData(data);
+        setAddGroupDialogVisible(true);
+    };
 
     /**
      * Обработчик события инициализации тулбара
@@ -20,7 +31,7 @@ export default (props) => {
                 options: {
                     icon: 'add',
                     text: 'Добавить группу',
-                    onClick: setAddGroupDialogVisible.bind(this, true)
+                    onClick: onAddClick
                 }
             });
         }
@@ -35,17 +46,22 @@ export default (props) => {
             height={750} >
             <React.Fragment>
                 <DataGrid
+                    columns={[{ caption: 'Наименование группы', dataField: 'name' }]}
                     dataSource={getGroups()}
                     onToolbarPreparing={onToolbarPreparing}
+                    onRowDblClick={onRowDblClick}
+                    hoverStateEnabled={true}
                 />
                 <Dialog
                     visible={addGroupDialogVisible}
                     onHiding={setAddGroupDialogVisible.bind(this, false)}
-                    title="Новая группа"
+                    title={selectedGroupData ? selectedGroupData.name : 'Новая группа'}
                     width={800}
                     height={750}
                 >
-                    <Editing visible={addGroupDialogVisible} />
+                    <Editing
+                        visible={addGroupDialogVisible}
+                        selectedGroupData={selectedGroupData} />
                 </Dialog>
             </React.Fragment>
         </Dialog>
