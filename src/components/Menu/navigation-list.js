@@ -18,40 +18,12 @@ export default (props) => {
                 onClick={props.showSubjectDialog}
             />
             <TreeView
-                dataSource={[
-                    {
-                        id: 1,
-                        text: 'Математика',
-                        expanded: false,
-                        items: [
-                            {
-                                id: '1_1',
-                                text: 'КТМ-01-18',
-                                items: [
-                                    { id: '1_1_1', text: 'Лекция' },
-                                    { id: '1_1_2', text: 'Лабораторная' }
-                                ]
-                            }]
-                    },
-                    {
-                        id: 2,
-                        text: 'Информатика',
-                        expanded: false,
-                        items: [
-                            {
-                                id: '2_1',
-                                text: 'КТМ-01-18',
-                                items: [
-                                    { id: '2_1_1', text: 'Лекция' },
-                                    { id: '2_1_2', text: 'Лабораторная' }
-                                ]
-                            }]
-                    }
-                ]}
+                dataSource={menuDataSource}
                 hoverStateEnabled={false}
                 activeStateEnabled={false}
                 focusStateEnabled={false}
-                elementAttr={{ class: 'panel-list' }} />
+                elementAttr={{ class: 'panel-list' }}
+                onItemClick={e => console.log(e)} />
         </div>
     );
 };

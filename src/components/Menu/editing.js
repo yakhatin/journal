@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, TextBox, DropDownBox, TreeView, Button } from 'devextreme-react';
+import notify from 'devextreme/ui/notify';
 import { getGroups } from '../Groups/helper';
+import { addMenuData } from './helper';
 
 export default (props) => {
     const [subjectName, setSubjectName] = useState(null);
@@ -12,6 +14,14 @@ export default (props) => {
         { type: 'laboratory', text: 'Лабораторные' },
         { type: 'practice', text: 'Практика' }
     ];
+
+    useEffect(() => {
+        if (props.visible) {
+            setSubjectName(null);
+            setGridBoxValue([]);
+            setTypesViewValue([]);
+        }
+    }, [props.visible]);
 
     const onSelectionChanged = ({ selectedRowKeys }) => {
         setGridBoxValue(selectedRowKeys);
@@ -54,7 +64,12 @@ export default (props) => {
     };
 
     const onSaveClick = () => {
-        console.log(subjectName, gridBoxValue, typesValue);
+        const { success, error } = addMenuData({ name: subjectName, groups: gridBoxValue, types: typesValue });
+        if (success) {
+            props.toogleDialog();
+        } else {
+            notify(error, 'error', 3000);
+        }
     };
 
     const onSubjectInput = ({ event }) => {
@@ -73,7 +88,7 @@ export default (props) => {
                             <TextBox
                                 value={subjectName}
                                 showClearButton={true}
-                                onInput={onSubjectInput} />
+                                onValueChanged={onSubjectInput} />
                         </div>
                     </div>
                     <div className="dx-field">

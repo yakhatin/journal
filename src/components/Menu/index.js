@@ -31,7 +31,7 @@ export default (props) => {
                 onHiding={setSubjectDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
-                <Edit toogleDialog={toogleDialog} />
+                <Edit toogleDialog={toogleDialog} visible={subjectDialogVisible} />
             </Dialog>
         </React.Fragment>
     );
