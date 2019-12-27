@@ -1,6 +1,3 @@
-import columns from './columns.json';
-import data from './data.json';
-
 const formatDate = (date) => {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -19,8 +16,8 @@ export const getColumns = () => {
     if (typeof persistedData === 'string') {
         return JSON.parse(persistedData);
     } else {
-        window.localStorage.setItem('columns', JSON.stringify(columns));
-        return columns;
+        window.localStorage.setItem('columns', JSON.stringify([]));
+        return [];
     }
 };
 
@@ -29,8 +26,8 @@ export const getDataSource = () => {
     if (typeof persistedData === 'string') {
         return JSON.parse(persistedData);
     } else {
-        window.localStorage.setItem('data', JSON.stringify(data));
-        return data;
+        window.localStorage.setItem('data', JSON.stringify([]));
+        return [];
     }
 };
 

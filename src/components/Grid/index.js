@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import { DataGrid } from 'devextreme-react';
-import { getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from '../../helpers';
+import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
 import './styles.css';
 
 export default (props) => {
+    const dataSource = getDataSource();
+
     /**
      * Ссылка на свойства компонента DxDataGrid
      */
@@ -116,7 +118,7 @@ export default (props) => {
             width={'calc(100vw - 20px)'}
             className={'grid-container'}
             columns={props.columns}
-            dataSource={props.dataSource}
+            dataSource={dataSource}
             searchPanel={{ visible: true }}
             onToolbarPreparing={onToolbarPreparing}
             scrolling={{ mode: 'virtual', showScrollbar: 'always' }}
