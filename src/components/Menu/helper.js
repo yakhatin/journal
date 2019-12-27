@@ -1,7 +1,26 @@
-export const getMenuData = () => {
+export const getMenuData = (selectedId = null) => {
     const storedMenuString = window.localStorage.getItem('menu-data');
     if (typeof storedMenuString === 'string') {
-        return JSON.parse(storedMenuString);
+        const storedMenu = JSON.parse(storedMenuString);
+        if (selectedId) {
+            return storedMenu.map(p1 => {
+                return {
+                    ...p1,
+                    items: p1.items.map(p2 => {
+                        return {
+                            ...p2,
+                            items: p2.items.map(p3 => {
+                                return {
+                                    ...p3,
+                                    expanded: p3.id === selectedId
+                                }
+                            })
+                        }
+                    })
+                }
+            });
+        }
+        return storedMenu;
     }
     return [];
 };
@@ -17,16 +36,19 @@ export const addMenuData = (data) => {
         const menuData = {
             id: id,
             text: data.name,
-            expanded: false,
             items: data.groups.map(el => ({
-                targetId: el.id,
                 id: `${id}_${el.id}`,
                 text: el.name,
                 items: data.types.map(typeData => ({
                     link: true,
-                    targetId: typeData.type,
                     id: `${id}_${typeData.type}`,
-                    text: typeData.text
+                    text: typeData.text,
+                    data: {
+                        type: typeData.type,
+                        group: el.id,
+                        groupName: el.name,
+                        subjectName: data.name
+                    }
                 }))
             }))
         };

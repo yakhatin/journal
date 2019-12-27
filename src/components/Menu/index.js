@@ -8,7 +8,12 @@ export default (props) => {
     const [subjectDialogVisible, setSubjectDialogVisible] = useState(false);
 
     const component = () => {
-        return <NavigationList showSubjectDialog={setSubjectDialogVisible.bind(this, true)} />
+        return (
+            <NavigationList
+                showSubjectDialog={setSubjectDialogVisible.bind(this, true)}
+                setSelectedSubject={props.setSelectedSubject}
+                selectedSubject={props.selectedSubject} />
+        )
     };
 
     const toogleDialog = () => {

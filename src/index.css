@@ -49,3 +49,11 @@ code {
 .ml-10 {
   margin-left: 10px;
 }
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}

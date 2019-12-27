@@ -12,6 +12,7 @@ function App() {
   const [columns, setColumns] = useState(undefined);
   const [dataSource, setDataSource] = useState(undefined);
   const [groupsDialogVisible, setGroupsDialogVisible] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
   const getGridData = () => {
     const columns = getColumns();
@@ -38,14 +39,21 @@ function App() {
         setOpenedCallBack={setOpenedCallBack}
         setHeaderRendered={setHeaderRendered}
         onGroupsListClick={onGroupsListClick} />
-      {headerRendered && dataSource && columns &&
-        <Menu opened={opened} >
-          <Grid
-            dataSource={dataSource}
-            columns={columns}
-            getGridData={getGridData} />
-        </Menu>
-      }
+      <Menu opened={opened} setSelectedSubject={setSelectedSubject} selectedSubject={selectedSubject}>
+        <div className="d-flex flex-grow-1 flex-column">
+          {headerRendered && dataSource && columns && selectedSubject &&
+            <Grid
+              dataSource={dataSource}
+              columns={columns}
+              getGridData={getGridData} />
+          }
+          {!selectedSubject &&
+            <div className="d-flex flex-grow-1 justify-content-center align-items-center">
+              <h2>Выберите предмет в "Меню"</h2>
+            </div>
+          }
+        </div>
+      </Menu>
       <Groups visible={groupsDialogVisible} setGroupsDialogVisible={setGroupsDialogVisible} />
     </React.Fragment>
   );
