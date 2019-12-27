@@ -45,7 +45,7 @@ export default (props) => {
                     width={800}
                     height={750}
                 >
-                    <Editing />
+                    <Editing visible={addGroupDialogVisible} />
                 </Dialog>
             </React.Fragment>
         </Dialog>

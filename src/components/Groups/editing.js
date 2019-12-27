@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, TextBox } from 'devextreme-react';
 import { createGroup } from './helper';
 
-const newGroupId = new Date().valueOf();
-
 export default (props) => {
+    const [groupId, setGroupId] = useState(null);
     const [groupName, setGroupName] = useState(null);
+
+    useEffect(() => {
+        if (props.visible) {
+            setGroupId(new Date().valueOf());
+        } else {
+            setGroupId(null);
+            setGroupName(null);
+        }
+    }, [props.visible]);
 
     const onNameInput = ({ event }) => {
         if (event.target) {
-            setGroupName(event.target.value)
+            setGroupName(event.target.value);
         };
     };
 
@@ -18,7 +26,7 @@ export default (props) => {
      * @param {*} e - данные из DxDataGrid
      */
     const onRowInserted = (e) => {
-        createGroup(e.data, newGroupId, groupName)
+        createGroup(e.data, groupId, groupName)
     };
 
     /**
@@ -41,7 +49,7 @@ export default (props) => {
                 <div className="dx-field-label">Наименование группы</div>
                 <div className="dx-field-value">
                     <TextBox
-                        defaultValue={null}
+                        value={groupName}
                         showClearButton={true}
                         onInput={onNameInput} />
                 </div>
