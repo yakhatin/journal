@@ -97,7 +97,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${props.title || 'Информатика - Лекция'}`
+                text: `${props.title || 'Информатика - Лекция (КТМ-01-18)'}`
             });
             toolbarItems.find(el => el.name === 'addRowButton').visible = false;
         }
