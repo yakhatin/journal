@@ -10,8 +10,8 @@ export default (props) => {
     const [typesValue, setTypesViewValue] = useState([]);
     const dataSource = getGroups();
     const typesDataSource = [
-        { type: 'lectures', text: 'Лекции' },
-        { type: 'laboratory', text: 'Лабораторные' },
+        { type: 'lecture', text: 'Лекция' },
+        { type: 'laboratory', text: 'Лабораторная' },
         { type: 'practice', text: 'Практика' }
     ];
 
