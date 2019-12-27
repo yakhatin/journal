@@ -8,6 +8,18 @@ const addGroup = (id, name) => {
     window.localStorage.setItem('groups', JSON.stringify(storedGroups));
 };
 
+export const deleteGroup = (id) => {
+    let storedGroups = [];
+    const storedGroupsString = window.localStorage.getItem('groups');
+    if (typeof storedGroupsString === 'string') {
+        storedGroups = JSON.parse(storedGroupsString);
+    }
+    const index = storedGroups.findIndex(el => el.id === id);
+    storedGroups.splice(index, 1);
+    window.localStorage.setItem('groups', JSON.stringify(storedGroups));
+    window.localStorage.removeItem(id);
+};
+
 export const getGroudData = (id) => {
     const storedGroupData = window.localStorage.getItem(id);
     if (typeof storedGroupData === 'string') {

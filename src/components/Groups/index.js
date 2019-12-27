@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DataGrid } from 'devextreme-react';
 import Dialog from '../Popup';
 import Editing from './editing';
-import { getGroups } from './helper';
+import { getGroups, deleteGroup } from './helper';
 
 export default (props) => {
     const [addGroupDialogVisible, setAddGroupDialogVisible] = useState(false);
@@ -37,6 +37,16 @@ export default (props) => {
         }
     };
 
+    /**
+     * Обработчик события удаления записи
+     * @param {*} e - данные из DxDataGrid
+     */
+    const onRowRemoved = ({ data }) => {
+        if (data) {
+            deleteGroup(data.id);
+        }
+    };
+
     return (
         <Dialog
             visible={props.visible}
@@ -51,6 +61,11 @@ export default (props) => {
                     onToolbarPreparing={onToolbarPreparing}
                     onRowDblClick={onRowDblClick}
                     hoverStateEnabled={true}
+                    editing={{
+                        useIcons: true,
+                        allowDeleting: true
+                    }}
+                    onRowRemoved={onRowRemoved}
                 />
                 <Dialog
                     visible={addGroupDialogVisible}
