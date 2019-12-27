@@ -11,8 +11,12 @@ export default (props) => {
         if (itemData.link) {
             props.setSelectedSubject({
                 id: itemData.id,
-                data: itemData.data
+                data: {
+                    ...itemData.data,
+                    typeText: itemData.text
+                }
             });
+            props.setOpenedCallBack(false);
         }
     };
 

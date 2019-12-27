@@ -12,7 +12,8 @@ export default (props) => {
             <NavigationList
                 showSubjectDialog={setSubjectDialogVisible.bind(this, true)}
                 setSelectedSubject={props.setSelectedSubject}
-                selectedSubject={props.selectedSubject} />
+                selectedSubject={props.selectedSubject}
+                setOpenedCallBack={props.setOpenedCallBack} />
         )
     };
 

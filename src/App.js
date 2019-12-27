@@ -32,17 +32,22 @@ function App() {
   const onGroupsListClick = () => {
     setGroupsDialogVisible(true);
   }
-
+  console.log(selectedSubject);
   return (
     <React.Fragment>
       <Header
         setOpenedCallBack={setOpenedCallBack}
         setHeaderRendered={setHeaderRendered}
         onGroupsListClick={onGroupsListClick} />
-      <Menu opened={opened} setSelectedSubject={setSelectedSubject} selectedSubject={selectedSubject}>
+      <Menu
+        opened={opened}
+        setSelectedSubject={setSelectedSubject}
+        selectedSubject={selectedSubject}
+        setOpenedCallBack={setOpenedCallBack}>
         <div className="d-flex flex-grow-1 flex-column">
           {headerRendered && dataSource && columns && selectedSubject &&
             <Grid
+              title={`${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`}
               dataSource={dataSource}
               columns={columns}
               getGridData={getGridData} />
