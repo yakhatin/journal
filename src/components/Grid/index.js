@@ -73,6 +73,7 @@ export default (props) => {
      */
     const onToolbarPreparing = e => {
         if (e.toolbarOptions && e.toolbarOptions.items) {
+            const { selectedSubject } = props;
             const toolbarItems = e.toolbarOptions.items;
             toolbarItems.unshift({
                 location: 'after',
@@ -97,7 +98,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${props.title || 'Информатика - Лекция (КТМ-01-18)'}`
+                text: `${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`
             });
             toolbarItems.find(el => el.name === 'addRowButton').visible = false;
         }

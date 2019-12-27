@@ -47,7 +47,7 @@ function App() {
         <div className="d-flex flex-grow-1 flex-column">
           {headerRendered && dataSource && columns && selectedSubject &&
             <Grid
-              title={`${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`}
+              selectedSubject={selectedSubject}
               dataSource={dataSource}
               columns={columns}
               getGridData={getGridData} />
