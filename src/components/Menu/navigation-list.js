@@ -19,9 +19,7 @@ export default (props) => {
             />
             <TreeView
                 dataSource={menuDataSource}
-                hoverStateEnabled={false}
-                activeStateEnabled={false}
-                focusStateEnabled={false}
+                hoverStateEnabled={true}
                 elementAttr={{ class: 'panel-list' }}
                 onItemClick={e => console.log(e)} />
         </div>

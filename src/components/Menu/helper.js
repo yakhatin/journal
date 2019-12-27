@@ -23,6 +23,7 @@ export const addMenuData = (data) => {
                 id: `${id}_${el.id}`,
                 text: el.name,
                 items: data.types.map(typeData => ({
+                    link: true,
                     targetId: typeData.type,
                     id: `${id}_${typeData.type}`,
                     text: typeData.text
