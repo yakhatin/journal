@@ -15,6 +15,14 @@ export default (props) => {
         {
             location: 'before',
             text: 'Журнал'
+        },
+        {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                text: 'Группы',
+                onClick: props.onGroupsListClick
+            }
         }
     ];
 
