@@ -1,3 +1,7 @@
+const createId = () => {
+    return '_' + Math.random().toString(36).substr(2, 9);
+};
+
 export const getMenuData = (selectedId = null) => {
     const storedMenuString = window.localStorage.getItem('menu-data');
     if (typeof storedMenuString === 'string') {
@@ -27,7 +31,7 @@ export const getMenuData = (selectedId = null) => {
 
 export const addMenuData = (data) => {
     try {
-        const id = new Date().valueOf();
+        const id = createId();
         let allMenuData = [];
         const storedMenuString = window.localStorage.getItem('menu-data');
         if (typeof storedMenuString === 'string') {
@@ -41,7 +45,7 @@ export const addMenuData = (data) => {
                 text: el.name,
                 items: data.types.map(typeData => ({
                     link: true,
-                    id: `${id}_${typeData.type}`,
+                    id: `${id}_${el.id}_${typeData.type}`,
                     text: typeData.text,
                     data: {
                         type: typeData.type,
