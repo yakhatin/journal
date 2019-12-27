@@ -4,8 +4,14 @@ import { getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataS
 import './styles.css';
 
 export default (props) => {
+    /**
+     * Ссылка на свойства компонента DxDataGrid
+     */
     let gridRef = useRef(null);
 
+    /**
+     * Добавление текущей даты в журнал
+     */
     const addNewColumnWithCurrDate = () => {
         const currDate = getCurrentDate();
         const columns = getColumns();
@@ -18,18 +24,34 @@ export default (props) => {
         }
     };
 
+    /**
+     * Обработчик события создания новой записи
+     * @param {*} e - данные из DxDataGrid
+     */
     const onRowInserted = (e) => {
         updateDataSource(e.data, 'insert');
     };
 
+    /**
+     * Обработчик события удаления записи
+     * @param {*} e - данные из DxDataGrid
+     */
     const onRowRemoved = (e) => {
         updateDataSource(e.data, 'delete');
     };
 
+    /**
+     * Обработчик события изменения записи
+     * @param {*} e - данные из DxDataGrid
+     */
     const onRowUpdated = (e) => {
         updateDataSource(e.data);
     };
 
+    /**
+     * Обработчик события нажатия на кнопку в тулбаре
+     * @param {*} e - данные из DxDataGrid
+     */
     const onToolbarItemClick = e => {
         if (e.itemData) {
             switch (e.itemData.id) {
@@ -45,6 +67,10 @@ export default (props) => {
         }
     };
 
+    /**
+     * Обработчик события инициализации тулбара
+     * @param {*} e - данные из DxDataGrid
+     */
     const onToolbarPreparing = e => {
         if (e.toolbarOptions && e.toolbarOptions.items) {
             const toolbarItems = e.toolbarOptions.items;
@@ -77,6 +103,9 @@ export default (props) => {
         }
     };
 
+    /**
+     * Вычисление высоты верхнего меню 
+     */
     const headerHeight = getHeaderHeight();
 
     return (
