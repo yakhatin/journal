@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Drawer } from 'devextreme-react';
+import Dialog from '../Popup';
+import Edit from './editing';
 import NavigationList from './navigation-list';
 
 export default (props) => {
+    const [subjectDialogVisible, setSubjectDialogVisible] = useState(false);
+
+    const component = () => {
+        return <NavigationList showSubjectDialog={setSubjectDialogVisible.bind(this, true)} />
+    };
+
     return (
-        <Drawer
-            opened={props.opened}
-            openedStateMode={'overlap'}
-            position={'left'}
-            revealMode={'slide'}
-            component={NavigationList}
-            height={'100%'}>
-            {props.children}
-        </Drawer>
+        <React.Fragment>
+            <Drawer
+                opened={props.opened}
+                openedStateMode={'overlap'}
+                position={'left'}
+                revealMode={'slide'}
+                component={component}
+                height={'100%'}>
+                {props.children}
+            </Drawer>
+            <Dialog
+                visible={subjectDialogVisible}
+                onHiding={setSubjectDialogVisible.bind(this, false)}
+                width={800}
+                height={750}>
+                <Edit />
+            </Dialog>
+        </React.Fragment>
     );
 };
