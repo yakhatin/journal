@@ -16,7 +16,8 @@ export const getMenuData = (selectedId = null) => {
                             items: p2.items.map(p3 => {
                                 return {
                                     ...p3,
-                                    expanded: p3.id === selectedId
+                                    expanded: p3.id === selectedId,
+                                    selected: p3.id === selectedId
                                 }
                             })
                         }
