@@ -4,7 +4,9 @@ import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColum
 import './styles.css';
 
 export default (props) => {
-    const dataSource = getDataSource();
+    const dataSourceId = props.selectedSubject.id;
+    const { group } = props.selectedSubject.data;
+    const { dataSource, columns } = getDataSource(dataSourceId, group);
 
     /**
      * Ссылка на свойства компонента DxDataGrid
@@ -16,13 +18,12 @@ export default (props) => {
      */
     const addNewColumnWithCurrDate = () => {
         const currDate = getCurrentDate();
-        const columns = getColumns();
         const dataField = currDate.replace(/\./g, '');
+        const { columns } = getDataSource(dataSourceId);
 
         if (columns.findIndex(el => el.dataField === dataField) < 0) {
             columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
-            updateColumns(columns);
-            props.getGridData();
+            updateColumns(columns, dataSourceId);
         }
     };
 
@@ -31,7 +32,7 @@ export default (props) => {
      * @param {*} e - данные из DxDataGrid
      */
     const onRowInserted = (e) => {
-        updateDataSource(e.data, 'insert');
+        updateDataSource(e.data, dataSourceId, 'insert');
     };
 
     /**
@@ -39,7 +40,7 @@ export default (props) => {
      * @param {*} e - данные из DxDataGrid
      */
     const onRowRemoved = (e) => {
-        updateDataSource(e.data, 'delete');
+        updateDataSource(e.data, dataSourceId, 'delete');
     };
 
     /**
@@ -47,7 +48,7 @@ export default (props) => {
      * @param {*} e - данные из DxDataGrid
      */
     const onRowUpdated = (e) => {
-        updateDataSource(e.data);
+        updateDataSource(e.data, dataSourceId);
     };
 
     /**
@@ -90,10 +91,6 @@ export default (props) => {
                         {
                             id: 1,
                             name: 'Дату'
-                        },
-                        {
-                            id: 2,
-                            name: 'Студента'
                         }
                     ]
                 }
@@ -102,7 +99,6 @@ export default (props) => {
                 location: 'before',
                 text: `${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`
             });
-            toolbarItems.find(el => el.name === 'addRowButton').visible = false;
         }
     };
 
@@ -117,7 +113,7 @@ export default (props) => {
             height={`calc(100vh - ${headerHeight}px)`}
             width={'calc(100vw - 20px)'}
             className={'grid-container'}
-            columns={props.columns}
+            columns={columns}
             dataSource={dataSource}
             searchPanel={{ visible: true }}
             onToolbarPreparing={onToolbarPreparing}
@@ -126,8 +122,6 @@ export default (props) => {
             columnAutoWidth={true}
             editing={{
                 mode: 'batch',
-                allowAdding: true,
-                allowDeleting: true,
                 allowUpdating: true,
                 useIcons: true
             }}

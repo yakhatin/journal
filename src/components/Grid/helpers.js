@@ -1,3 +1,5 @@
+import { getGroudData } from '../Groups/helper';
+
 const formatDate = (date) => {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -21,14 +23,44 @@ export const getColumns = () => {
     }
 };
 
-export const getDataSource = () => {
-    const persistedData = window.localStorage.getItem('data');
-    if (typeof persistedData === 'string') {
-        return JSON.parse(persistedData);
+const dataSourceWithGroupData = (groupId, journalData) => {
+    const groupData = getGroudData(groupId);
+    const columns = [{ dataField: 'name', caption: 'ФИО', sortOrder: 'asc' }];
+    columns.push(...journalData.columns);
+    const defaultValues = journalData.columns.reduce((obj, item) => {
+        obj[item.dataField] = false;
+        return obj
+    }, {})
+    const dataSource = groupData.map(group => {
+        const index = journalData.dataSource.findIndex(j => j.id === group.id);
+        if (index > -1) {
+            return {
+                ...group,
+                ...journalData.dataSource[index]
+            };
+        }
+        return {
+            ...group,
+            ...defaultValues
+        };
+    });
+    return { dataSource, columns };
+};
+
+export const getDataSource = (dataSourceId, groupId = null) => {
+    const persistedDataString = window.localStorage.getItem(dataSourceId);
+    let data = { dataSource: [], columns: [] };
+
+    if (typeof persistedDataString === 'string') {
+        data = JSON.parse(persistedDataString);
     } else {
-        window.localStorage.setItem('data', JSON.stringify([]));
-        return [];
+        window.localStorage.setItem(dataSourceId, JSON.stringify({ dataSource: [], columns: [] }));
     }
+
+    if (groupId) {
+        return dataSourceWithGroupData(groupId, data);
+    }
+    return data;
 };
 
 export const getCurrentDate = () => {
@@ -40,25 +72,32 @@ export const getHeaderHeight = () => {
     return document.querySelector('.header-container') ? document.querySelector('.header-container').offsetHeight + 20 : 0;
 };
 
-export const updateColumns = (columns = []) => {
+export const updateColumns = (columns = [], dataSourceId) => {
+    const data = getDataSource(dataSourceId);
     const lastColumn = columns[columns.length - 1];
-    window.localStorage.setItem('columns', JSON.stringify(columns));
-    const dataSource = getDataSource();
-    const newDataSource = dataSource.map(el => ({
+    data.columns = columns;
+    const newDataSource = data.dataSource.map(el => ({
         ...el,
         [lastColumn.dataField]: false
     }));
-    window.localStorage.setItem('data', JSON.stringify(newDataSource));
+    data.dataSource = newDataSource;
+    window.localStorage.setItem(dataSourceId, JSON.stringify(data));
 };
 
-export const updateDataSource = (data, type = 'update') => {
-    const dataSource = getDataSource();
-    const index = dataSource.findIndex(el => el.id === data.id);
+export const updateDataSource = (data, dataSourceId, type = 'update') => {
+    console.log(data);
+    const storedData = getDataSource(dataSourceId);
+    const { dataSource } = storedData;
+    let index = dataSource.findIndex(el => el.id === data.id);
     let updated = false;
 
     switch (type) {
         case 'update': {
-            dataSource[index] = data;
+            if (index < 0) {
+                dataSource.push(data)
+            } else {
+                dataSource[index] = data;
+            }
             updated = true;
             break;
         }
@@ -75,6 +114,6 @@ export const updateDataSource = (data, type = 'update') => {
     };
 
     if (updated) {
-        window.localStorage.setItem('data', JSON.stringify(dataSource));
+        window.localStorage.setItem(dataSourceId, JSON.stringify(storedData));
     }
 };
