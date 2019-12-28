@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { DataGrid } from 'devextreme-react';
 import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
 import './styles.css';
@@ -10,6 +10,12 @@ export default (props) => {
     const { dataSource: storedDataSource, columns } = getDataSource(dataSourceId, group);
 
     const [dataSource, setDataSource] = useState(storedDataSource);
+
+    useEffect(() => {
+        if (!props.groupsDialogVisible) {
+            refreshDataSource();
+        }
+    }, [selectedSubject.id, props.groupsDialogVisible]);
 
     /**
      * Ссылка на свойства компонента DxDataGrid
@@ -29,6 +35,10 @@ export default (props) => {
             updateColumns(columns, dataSourceId);
         }
 
+        refreshDataSource();
+    };
+
+    const refreshDataSource = () => {
         const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
         setDataSource(storedDataSource);
     };
@@ -83,6 +93,14 @@ export default (props) => {
     const onToolbarPreparing = e => {
         if (e.toolbarOptions && e.toolbarOptions.items) {
             const toolbarItems = e.toolbarOptions.items;
+            toolbarItems.unshift({
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+                    text: 'Задания',
+                    onClick: () => console.log(321)
+                }
+            });
             toolbarItems.unshift({
                 location: 'after',
                 widget: 'dxDropDownButton',

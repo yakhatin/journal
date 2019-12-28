@@ -32,7 +32,7 @@ function App() {
         setOpenedCallBack={setOpenedCallBack}>
         <div className="d-flex flex-grow-1 flex-column">
           {headerRendered && selectedSubject &&
-            <Grid selectedSubject={selectedSubject} />
+            <Grid selectedSubject={selectedSubject} groupsDialogVisible={groupsDialogVisible} />
           }
           {!selectedSubject &&
             <div className="d-flex flex-grow-1 justify-content-center align-items-center">
