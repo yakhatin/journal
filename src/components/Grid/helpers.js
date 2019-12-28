@@ -25,7 +25,7 @@ export const getColumns = () => {
 
 const dataSourceWithGroupData = (groupId, journalData) => {
     const groupData = getGroudData(groupId);
-    const columns = [{ dataField: 'name', caption: 'ФИО', sortOrder: 'asc' }];
+    const columns = [{ dataField: 'name', caption: 'ФИО', sortOrder: 'asc', fixed: true }];
     columns.push(...journalData.columns);
     const defaultValues = journalData.columns.reduce((obj, item) => {
         obj[item.dataField] = false;
