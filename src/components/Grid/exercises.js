@@ -1,18 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { DataGrid } from 'devextreme-react';
+import { DataGrid, TextBox, Button } from 'devextreme-react';
 import Dialog from '../Popup';
-import Exercises from './exercises';
 import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
+import { createId } from '../Menu/helper';
 import './styles.css';
 
 export default (props) => {
     const { selectedSubject } = props;
-    const dataSourceId = selectedSubject.id;
+    const dataSourceId = `exercises_${selectedSubject.id}`;
     const { group } = selectedSubject.data;
     const { dataSource: storedDataSource, columns } = getDataSource(dataSourceId, group);
 
     const [dataSource, setDataSource] = useState(storedDataSource);
-    const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
+    const [newExerciseDialogVisible, setNewExerciseDialogVisible] = useState(false);
+    const [exerciseName, setExerciseName] = useState(null);
 
     useEffect(() => {
         if (!props.groupsDialogVisible) {
@@ -28,13 +29,12 @@ export default (props) => {
     /**
      * Добавление текущей даты в журнал
      */
-    const addNewColumnWithCurrDate = () => {
-        const currDate = getCurrentDate();
-        const dataField = currDate.replace(/\./g, '');
+    const addNewColumnWithExercise = () => {
+        const dataField = createId();
         const { columns } = getDataSource(dataSourceId);
 
         if (columns.findIndex(el => el.dataField === dataField) < 0) {
-            columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
+            columns.push({ dataField: dataField, caption: exerciseName, alignment: 'center', width: 250, dataType: 'boolean' });
             updateColumns(columns, dataSourceId);
         }
 
@@ -70,10 +70,6 @@ export default (props) => {
         updateDataSource(e.data, dataSourceId);
     };
 
-    const onDateAdd = e => {
-        addNewColumnWithCurrDate();
-    };
-
     /**
      * Обработчик события инициализации тулбара
      * @param {*} e - данные из DxDataGrid
@@ -85,24 +81,27 @@ export default (props) => {
                 location: 'after',
                 widget: 'dxButton',
                 options: {
-                    text: 'Задания',
-                    onClick: setExercisesDialogVisible.bind(this, true)
-                }
-            });
-            toolbarItems.unshift({
-                location: 'after',
-                widget: 'dxButton',
-                options: {
-                    text: 'Добавить дату',
+                    text: 'Добавить задание',
                     icon: 'add',
-                    onClick: onDateAdd
+                    onClick: setNewExerciseDialogVisible.bind(this, true)
                 }
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`
+                text: `${selectedSubject.data.subjectName} - Задания (${selectedSubject.data.groupName})`
             });
         }
+    };
+
+    const onExerciseNameChanged = ({ event }) => {
+        if (event.target) {
+            setExerciseName(event.target.value);
+        }
+    }
+
+    const onSaveClick = () => {
+        addNewColumnWithExercise();
+        setNewExerciseDialogVisible(false);
     };
 
     /**
@@ -114,14 +113,9 @@ export default (props) => {
         <React.Fragment>
             <DataGrid
                 ref={ref => gridRef = ref}
-                height={`calc(100vh - ${headerHeight}px)`}
-                width={'calc(100vw - 20px)'}
-                className={'grid-container'}
                 columns={columns}
                 dataSource={dataSource}
-                searchPanel={{ visible: true }}
                 onToolbarPreparing={onToolbarPreparing}
-                scrolling={{ mode: 'virtual', showScrollbar: 'always' }}
                 allowColumnResizing={true}
                 columnAutoWidth={true}
                 editing={{
@@ -139,12 +133,35 @@ export default (props) => {
                 }}
             />
             <Dialog
-                title="Задания"
-                visible={exercisesDialogVisible}
-                onHiding={setExercisesDialogVisible.bind(this, false)}
-                width={800}
-                height={750}>
-                <Exercises {...props} />
+                title="Новое задание"
+                visible={newExerciseDialogVisible}
+                onHiding={setNewExerciseDialogVisible.bind(this, false)}
+                width={500}
+                height={300}>
+                <div className="d-flex flex-grow-1 flex-column h-100">
+                    <div className="d-flex flex-grow-1 flex-column">
+                        <div className="dx-field">
+                            <div className="dx-field-label">Наименование предмета</div>
+                            <div className="dx-field-value">
+                                <TextBox
+                                    value={exerciseName}
+                                    showClearButton={true}
+                                    onValueChanged={onExerciseNameChanged} />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <Button
+                            text="Сохранить"
+                            icon="save"
+                            onClick={onSaveClick} />
+                        <Button
+                            className="ml-10"
+                            text="Отмена"
+                            icon="close"
+                            onClick={setNewExerciseDialogVisible.bind(this, false)} />
+                    </div>
+                </div>
             </Dialog>
         </React.Fragment>
     )
