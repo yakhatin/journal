@@ -1,12 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { DataGrid } from 'devextreme-react';
 import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
 import './styles.css';
 
 export default (props) => {
-    const dataSourceId = props.selectedSubject.id;
-    const { group } = props.selectedSubject.data;
-    const { dataSource, columns } = getDataSource(dataSourceId, group);
+    const { selectedSubject } = props;
+    const dataSourceId = selectedSubject.id;
+    const { group } = selectedSubject.data;
+    const { dataSource: storedDataSource, columns } = getDataSource(dataSourceId, group);
+
+    const [dataSource, setDataSource] = useState(storedDataSource);
 
     /**
      * Ссылка на свойства компонента DxDataGrid
@@ -25,6 +28,9 @@ export default (props) => {
             columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
             updateColumns(columns, dataSourceId);
         }
+
+        const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
+        setDataSource(storedDataSource);
     };
 
     /**
@@ -63,7 +69,7 @@ export default (props) => {
                     break;
                 }
                 case 2: {
-                    gridRef.instance.addRow();
+                    console.log('NEW EXERCISE');
                     break;
                 }
             }
@@ -76,7 +82,6 @@ export default (props) => {
      */
     const onToolbarPreparing = e => {
         if (e.toolbarOptions && e.toolbarOptions.items) {
-            const { selectedSubject } = props;
             const toolbarItems = e.toolbarOptions.items;
             toolbarItems.unshift({
                 location: 'after',
@@ -91,6 +96,11 @@ export default (props) => {
                         {
                             id: 1,
                             name: 'Дату'
+                        },
+                        {
+                            id: 2,
+                            name: 'Задание',
+                            visible: selectedSubject.data.type === 'laboratory' || selectedSubject.data.type === 'practice'
                         }
                     ]
                 }
