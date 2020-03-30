@@ -1,9 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from 'devextreme-react';
 import produce from "immer";
 import Dialog from '../Popup';
 import Exercises from './exercises';
-import { getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
+import { getHeaderHeight, getCurrentDate } from './helpers';
 import getDataSource from '../../meta/grid/dataSource';
 import './styles.css';
 import { post } from '../../meta/meta';
@@ -14,8 +14,12 @@ export default (props) => {
     const { group } = selectedSubject.data;
 
     const [columns, setColumns] = useState([]);
+    const [selectedScoreType, setSelectedScoreType] = useState(null);
     const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
 
+    /**
+     * Загрузка колонок
+     */
     useEffect(() => {
         post('journal/columns')
             .then(result => {
@@ -30,26 +34,22 @@ export default (props) => {
     }, [selectedSubject.id, props.groupsDialogVisible]);
 
     /**
-     * Ссылка на свойства компонента DxDataGrid
-     */
-    let gridRef = useRef(null);
-
-    /**
      * Добавление текущей даты в журнал
      */
-    const addNewColumnWithCurrDate = () => {
+    const addNewColumnWithCurrDate = ({ item: dataType, id }) => {
         const currDate = getCurrentDate();
 
         if (columns.findIndex(el => el.dataField === currDate) < 0) {
             const nextColumns = produce(columns, draft => {
-                draft.push({ dataField: currDate, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
+                draft.push({ dataField: currDate, caption: currDate, alignment: 'center', width: 100, dataType });
             })
             setColumns(nextColumns);
+            setSelectedScoreType(id);
         }
     };
 
-    const onDateAdd = e => {
-        addNewColumnWithCurrDate();
+    const onDateAdd = ({ item }) => {
+        addNewColumnWithCurrDate(item);
     };
 
     /**
@@ -69,11 +69,22 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'after',
-                widget: 'dxButton',
+                widget: 'dxDropDownButton',
                 options: {
+                    keyExpr: "id",
+                    displayExpr: "name",
                     text: 'Добавить дату',
                     icon: 'add',
-                    onClick: onDateAdd
+                    onSelectionChanged: onDateAdd,
+                    items: [{
+                        id: 1,
+                        name: 'Посещаемость',
+                        value: 'boolean'
+                    }, {
+                        id: 2,
+                        name: 'Баллы',
+                        value: 'number'
+                    }]
                 }
             });
             toolbarItems.unshift({
@@ -89,13 +100,13 @@ export default (props) => {
     const headerHeight = getHeaderHeight();
 
     const params = {
-        subjectId: 1
+        subjectId: 1,
+        scoreType: selectedScoreType
     };
 
     return (
         <React.Fragment>
             <DataGrid
-                ref={ref => gridRef = ref}
                 height={`calc(100vh - ${headerHeight}px)`}
                 width={'calc(100vw - 20px)'}
                 className={'grid-container'}
