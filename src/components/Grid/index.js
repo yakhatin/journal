@@ -17,11 +17,17 @@ export default (props) => {
     const [selectedScoreType, setSelectedScoreType] = useState(null);
     const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
 
+    const params = {
+        groupId: 8,
+        subjectId: 4,
+        scoreType: selectedScoreType
+    };
+
     /**
      * Загрузка колонок
      */
     useEffect(() => {
-        post('journal/columns')
+        post('journal/columns', params)
             .then(result => {
                 setColumns(result);
             });
@@ -99,11 +105,6 @@ export default (props) => {
      */
     const headerHeight = getHeaderHeight();
 
-    const params = {
-        subjectId: 1,
-        scoreType: selectedScoreType
-    };
-
     return (
         <React.Fragment>
             <DataGrid
@@ -111,7 +112,7 @@ export default (props) => {
                 width={'calc(100vw - 20px)'}
                 className={'grid-container'}
                 columns={columns}
-                dataSource={getDataSource('journal', 'student_id', params)}
+                dataSource={getDataSource('journal', 'id', params)}
                 searchPanel={{ visible: true }}
                 onToolbarPreparing={onToolbarPreparing}
                 scrolling={{ mode: 'virtual', showScrollbar: 'always' }}
