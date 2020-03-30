@@ -1,5 +1,7 @@
 import { getGroudData } from '../Groups/helper';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const formatDate = (date) => {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -7,10 +9,9 @@ const formatDate = (date) => {
     var mm = date.getMonth() + 1;
     if (mm < 10) mm = '0' + mm;
 
-    var yy = date.getFullYear() % 100;
-    if (yy < 10) yy = '0' + yy;
+    var yy = date.getFullYear();
 
-    return dd + '.' + mm + '.' + yy;
+    return yy + '-' + mm + '-' + dd;
 };
 
 export const getColumns = () => {
@@ -47,20 +48,20 @@ const dataSourceWithGroupData = (groupId, journalData) => {
     return { dataSource, columns };
 };
 
-export const getDataSource = (dataSourceId, groupId = null) => {
-    const persistedDataString = window.localStorage.getItem(dataSourceId);
-    let data = { dataSource: [], columns: [] };
-
-    if (typeof persistedDataString === 'string') {
-        data = JSON.parse(persistedDataString);
-    } else {
-        window.localStorage.setItem(dataSourceId, JSON.stringify({ dataSource: [], columns: [] }));
+export const getDataSource = async (dataSourceName, params) => {
+    try {
+        const response = await fetch(`${apiUrl}${dataSourceName}`, {
+            method: 'POST',
+            body: JSON.stringify(params)
+        });
+        const { success, data, message } = await response.json();
+        if (success) {
+            return data;
+        }
+        throw new Error(message);
+    } catch (err) {
+        throw new Error(err);
     }
-
-    if (groupId) {
-        return dataSourceWithGroupData(groupId, data);
-    }
-    return data;
 };
 
 export const getCurrentDate = () => {

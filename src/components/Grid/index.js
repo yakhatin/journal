@@ -1,22 +1,31 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { DataGrid } from 'devextreme-react';
+import produce from "immer";
 import Dialog from '../Popup';
 import Exercises from './exercises';
-import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
+import { getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
+import getDataSource from '../../meta/grid/dataSource';
 import './styles.css';
+import { post } from '../../meta/meta';
 
 export default (props) => {
     const { selectedSubject } = props;
     const dataSourceId = selectedSubject.id;
     const { group } = selectedSubject.data;
-    const { dataSource: storedDataSource, columns } = getDataSource(dataSourceId, group);
 
-    const [dataSource, setDataSource] = useState(storedDataSource);
+    const [columns, setColumns] = useState([]);
     const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
 
     useEffect(() => {
+        post('journal/columns')
+            .then(result => {
+                setColumns(result);
+            });
+    }, []);
+
+    useEffect(() => {
         if (!props.groupsDialogVisible) {
-            refreshDataSource();
+            // refreshDataSource();
         }
     }, [selectedSubject.id, props.groupsDialogVisible]);
 
@@ -30,44 +39,13 @@ export default (props) => {
      */
     const addNewColumnWithCurrDate = () => {
         const currDate = getCurrentDate();
-        const dataField = currDate.replace(/\./g, '');
-        const { columns } = getDataSource(dataSourceId);
 
-        if (columns.findIndex(el => el.dataField === dataField) < 0) {
-            columns.push({ dataField: dataField, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
-            updateColumns(columns, dataSourceId);
+        if (columns.findIndex(el => el.dataField === currDate) < 0) {
+            const nextColumns = produce(columns, draft => {
+                draft.push({ dataField: currDate, caption: currDate, alignment: 'center', width: 100, dataType: 'boolean' });
+            })
+            setColumns(nextColumns);
         }
-
-        refreshDataSource();
-    };
-
-    const refreshDataSource = () => {
-        const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
-        setDataSource(storedDataSource);
-    };
-
-    /**
-     * Обработчик события создания новой записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowInserted = (e) => {
-        updateDataSource(e.data, dataSourceId, 'insert');
-    };
-
-    /**
-     * Обработчик события удаления записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowRemoved = (e) => {
-        updateDataSource(e.data, dataSourceId, 'delete');
-    };
-
-    /**
-     * Обработчик события изменения записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowUpdated = (e) => {
-        updateDataSource(e.data, dataSourceId);
     };
 
     const onDateAdd = e => {
@@ -110,6 +88,10 @@ export default (props) => {
      */
     const headerHeight = getHeaderHeight();
 
+    const params = {
+        subjectId: 1
+    };
+
     return (
         <React.Fragment>
             <DataGrid
@@ -118,7 +100,7 @@ export default (props) => {
                 width={'calc(100vw - 20px)'}
                 className={'grid-container'}
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={getDataSource('journal', 'student_id', params)}
                 searchPanel={{ visible: true }}
                 onToolbarPreparing={onToolbarPreparing}
                 scrolling={{ mode: 'virtual', showScrollbar: 'always' }}
@@ -129,23 +111,20 @@ export default (props) => {
                     allowUpdating: true,
                     useIcons: true
                 }}
-                onRowInserted={onRowInserted}
-                onRowUpdated={onRowUpdated}
-                onRowRemoved={onRowRemoved}
                 hoverStateEnabled={true}
                 export={{
                     enabled: true,
                     fileName: new Date().valueOf()
                 }}
             />
-            <Dialog
+            {/* <Dialog
                 title="Задания"
                 visible={exercisesDialogVisible}
                 onHiding={setExercisesDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
                 <Exercises {...props} />
-            </Dialog>
+            </Dialog> */}
         </React.Fragment>
     )
 };

@@ -9,9 +9,8 @@ export default (props) => {
     const { selectedSubject } = props;
     const dataSourceId = `exercises_${selectedSubject.id}`;
     const { group } = selectedSubject.data;
-    const { dataSource: storedDataSource, columns } = getDataSource(dataSourceId, group);
 
-    const [dataSource, setDataSource] = useState(storedDataSource);
+    const [dataSource, setDataSource] = useState({});
     const [newExerciseDialogVisible, setNewExerciseDialogVisible] = useState(false);
     const [exerciseName, setExerciseName] = useState(null);
 
@@ -30,20 +29,20 @@ export default (props) => {
      * Добавление текущей даты в журнал
      */
     const addNewColumnWithExercise = () => {
-        const dataField = createId();
-        const { columns } = getDataSource(dataSourceId);
+        // const dataField = createId();
+        // const { columns } = getDataSource(dataSourceId);
 
-        if (columns.findIndex(el => el.dataField === dataField) < 0) {
-            columns.push({ dataField: dataField, caption: exerciseName, alignment: 'center', width: 250, dataType: 'boolean' });
-            updateColumns(columns, dataSourceId);
-        }
+        // if (columns.findIndex(el => el.dataField === dataField) < 0) {
+        //     columns.push({ dataField: dataField, caption: exerciseName, alignment: 'center', width: 250, dataType: 'boolean' });
+        //     updateColumns(columns, dataSourceId);
+        // }
 
-        refreshDataSource();
+        // refreshDataSource();
     };
 
     const refreshDataSource = () => {
-        const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
-        setDataSource(storedDataSource);
+        // const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
+        // setDataSource(storedDataSource);
     };
 
     /**
@@ -113,7 +112,6 @@ export default (props) => {
         <React.Fragment>
             <DataGrid
                 ref={ref => gridRef = ref}
-                columns={columns}
                 dataSource={dataSource}
                 onToolbarPreparing={onToolbarPreparing}
                 allowColumnResizing={true}
