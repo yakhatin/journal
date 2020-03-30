@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, TextBox } from 'devextreme-react';
-import { updateGroupData, getGroudData } from './helper';
+import { updateGroupData } from './helper';
+import getDataSource from '../../meta/grid/dataSource';
 
 export default (props) => {
     const [groupId, setGroupId] = useState(null);
@@ -12,7 +13,6 @@ export default (props) => {
             setGroupId(props.selectedGroupData ? props.selectedGroupData.id : `group_${new Date().valueOf()}`);
             if (props.selectedGroupData) {
                 setGroupName(props.selectedGroupData.name);
-                setDataSource(getGroudData(props.selectedGroupData.id));
             }
         } else {
             setGroupId(null);
@@ -65,6 +65,10 @@ export default (props) => {
         }
     };
 
+    const params = {
+        'group_id': props.selectedGroupData ? props.selectedGroupData.id : null
+    };
+
     return (
         <React.Fragment>
             <div className="dx-field">
@@ -79,7 +83,7 @@ export default (props) => {
             <DataGrid
                 onToolbarPreparing={onToolbarPreparing}
                 columns={[{ dataField: 'name', caption: 'ФИО' }]}
-                dataSource={dataSource}
+                dataSource={getDataSource('students', 'id', params)}
                 editing={{
                     mode: 'batch',
                     useIcons: true,
@@ -87,9 +91,6 @@ export default (props) => {
                     allowUpdating: true,
                     allowDeleting: true
                 }}
-                onRowInserted={onRowInserted}
-                onRowRemoved={onRowRemoved}
-                onRowUpdated={onRowUpdated}
             />
         </React.Fragment>
     )

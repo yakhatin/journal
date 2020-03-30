@@ -16,11 +16,15 @@ export const post = async (methodName, params = {}) => {
         }
 
         const response = await fetch(`${apiUrl}${methodName}`, requestParams);
-        const { success, data, message } = await response.json();
-        if (success) {
-            return data;
+        if ([201, 204].includes(response.status)) {
+            return [];
+        } else {
+            const { success, data, message } = await response.json();
+            if (success) {
+                return data;
+            }
+            throw new Error(message);
         }
-        throw new Error(message);
     } catch (err) {
         throw new Error(err);
     }

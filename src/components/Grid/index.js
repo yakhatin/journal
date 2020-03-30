@@ -128,14 +128,14 @@ export default (props) => {
                     fileName: new Date().valueOf()
                 }}
             />
-            {/* <Dialog
+            <Dialog
                 title="Задания"
                 visible={exercisesDialogVisible}
                 onHiding={setExercisesDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
                 <Exercises {...props} />
-            </Dialog> */}
+            </Dialog>
         </React.Fragment>
     )
 };

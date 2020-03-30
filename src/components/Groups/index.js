@@ -2,49 +2,15 @@ import React, { useState } from 'react';
 import { DataGrid } from 'devextreme-react';
 import Dialog from '../Popup';
 import Editing from './editing';
-import { getGroups, deleteGroup } from './helper';
+import getDataSource from '../../meta/grid/dataSource';
 
 export default (props) => {
     const [addGroupDialogVisible, setAddGroupDialogVisible] = useState(false);
     const [selectedGroupData, setSelectedGroupData] = useState(null);
 
-    const onAddClick = () => {
-        setSelectedGroupData(null);
-        setAddGroupDialogVisible(true);
-    }
-
     const onRowDblClick = ({ data }) => {
         setSelectedGroupData(data);
         setAddGroupDialogVisible(true);
-    };
-
-    /**
-     * Обработчик события инициализации тулбара
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onToolbarPreparing = e => {
-        if (e.toolbarOptions && e.toolbarOptions.items) {
-            const toolbarItems = e.toolbarOptions.items;
-            toolbarItems.push({
-                location: 'before',
-                widget: 'dxButton',
-                options: {
-                    icon: 'add',
-                    text: 'Добавить группу',
-                    onClick: onAddClick
-                }
-            });
-        }
-    };
-
-    /**
-     * Обработчик события удаления записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowRemoved = ({ data }) => {
-        if (data) {
-            deleteGroup(data.id);
-        }
     };
 
     return (
@@ -57,15 +23,15 @@ export default (props) => {
             <React.Fragment>
                 <DataGrid
                     columns={[{ caption: 'Наименование группы', dataField: 'name' }]}
-                    dataSource={getGroups()}
-                    onToolbarPreparing={onToolbarPreparing}
+                    dataSource={getDataSource('groups')}
                     onRowDblClick={onRowDblClick}
                     hoverStateEnabled={true}
                     editing={{
                         useIcons: true,
-                        allowDeleting: true
+                        allowAdding: true,
+                        allowDeleting: true,
+                        allowUpdating: true
                     }}
-                    onRowRemoved={onRowRemoved}
                 />
                 <Dialog
                     visible={addGroupDialogVisible}
