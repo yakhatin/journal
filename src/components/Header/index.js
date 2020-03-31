@@ -6,14 +6,6 @@ export default (props) => {
     const toolbarItems = [
         {
             location: 'before',
-            widget: 'dxButton',
-            options: {
-                icon: 'menu',
-                onClick: props.setOpenedCallBack
-            }
-        },
-        {
-            location: 'before',
             text: 'Журнал'
         },
         {

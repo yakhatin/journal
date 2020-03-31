@@ -1,14 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { DataGrid, TextBox, Button } from 'devextreme-react';
 import Dialog from '../Popup';
-import { getDataSource, getHeaderHeight, getCurrentDate, getColumns, updateColumns, updateDataSource } from './helpers';
-import { createId } from '../Menu/helper';
+import { getHeaderHeight, getCurrentDate } from './helpers';
 import './styles.css';
 
 export default (props) => {
-    const { selectedSubject } = props;
+    const { selectedSubject, selectedGroup } = props;
     const dataSourceId = `exercises_${selectedSubject.id}`;
-    const { group } = selectedSubject.data;
 
     const [dataSource, setDataSource] = useState({});
     const [newExerciseDialogVisible, setNewExerciseDialogVisible] = useState(false);
@@ -46,30 +44,6 @@ export default (props) => {
     };
 
     /**
-     * Обработчик события создания новой записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowInserted = (e) => {
-        updateDataSource(e.data, dataSourceId, 'insert');
-    };
-
-    /**
-     * Обработчик события удаления записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowRemoved = (e) => {
-        updateDataSource(e.data, dataSourceId, 'delete');
-    };
-
-    /**
-     * Обработчик события изменения записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowUpdated = (e) => {
-        updateDataSource(e.data, dataSourceId);
-    };
-
-    /**
      * Обработчик события инициализации тулбара
      * @param {*} e - данные из DxDataGrid
      */
@@ -87,7 +61,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.data.subjectName} - Задания (${selectedSubject.data.groupName})`
+                text: `${selectedSubject.name} - Задания (${selectedGroup.name})`
             });
         }
     };
@@ -121,9 +95,6 @@ export default (props) => {
                     allowUpdating: true,
                     useIcons: true
                 }}
-                onRowInserted={onRowInserted}
-                onRowUpdated={onRowUpdated}
-                onRowRemoved={onRowRemoved}
                 hoverStateEnabled={true}
                 export={{
                     enabled: true,

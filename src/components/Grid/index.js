@@ -9,17 +9,27 @@ import './styles.css';
 import { post } from '../../meta/meta';
 
 export default (props) => {
-    const { selectedSubject } = props;
-    const dataSourceId = selectedSubject.id;
-    const { group } = selectedSubject.data;
-
+    const { groupsDialogVisible } = props;
     const [columns, setColumns] = useState([]);
     const [selectedScoreType, setSelectedScoreType] = useState(null);
     const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
 
+    const [selectedSubject, setSelectedSubject] = useState({
+        id: 1,
+        name: 'Математика',
+        typeName: 'Лекция'
+    });
+    const [selectedGroup, setSelectedGroup] = useState({
+        id: 2,
+        name: 'КТ-41-13'
+    });
+
+    const subjectId = selectedSubject.id;
+    const groupId = selectedGroup.id;
+
     const params = {
-        groupId: 8,
-        subjectId: 4,
+        groupId,
+        subjectId,
         scoreType: selectedScoreType
     };
 
@@ -95,7 +105,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.data.subjectName} - ${selectedSubject.data.typeText} (${selectedSubject.data.groupName})`
+                text: `${selectedSubject.name} - ${selectedSubject.typeName} (${selectedGroup.name})`
             });
         }
     };
@@ -135,7 +145,10 @@ export default (props) => {
                 onHiding={setExercisesDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
-                <Exercises {...props} />
+                <Exercises
+                    groupsDialogVisible={groupsDialogVisible}
+                    selectedSubject={selectedSubject}
+                    selectedGroup={selectedGroup} />
             </Dialog>
         </React.Fragment>
     )
