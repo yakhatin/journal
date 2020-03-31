@@ -61,7 +61,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.name} - Задания (${selectedGroup.name})`
+                text: `${selectedSubject.title} - Задания (${selectedGroup.name})`
             });
         }
     };

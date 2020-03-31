@@ -18,7 +18,7 @@ export default (props) => {
 
     const [selectedSubject, setSelectedSubject] = useState({
         id: 1,
-        name: 'Математика',
+        title: 'Математика',
         typeName: 'Лекция'
     });
     const [selectedGroup, setSelectedGroup] = useState({
@@ -35,15 +35,19 @@ export default (props) => {
         scoreType: selectedScoreType
     };
 
-    /**
-     * Загрузка колонок
-     */
-    useEffect(() => {
+    const getColumns = () => {
         post('journal/columns', params)
             .then(result => {
                 setColumns(result);
             });
-    }, []);
+    }
+
+    /**
+     * Загрузка колонок
+     */
+    useEffect(() => {
+        getColumns();
+    }, [selectedGroup, selectedSubject]);
 
     /**
      * Добавление текущей даты в журнал
@@ -96,7 +100,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                template: `<div class="journal-grid-title">${selectedSubject.name} - ${selectedSubject.typeName} (${selectedGroup.name})</div>`
+                template: `<div class="journal-grid-title">${selectedSubject.title} - ${selectedSubject.typeName} (${selectedGroup.name})</div>`
             });
             toolbarItems.unshift({
                 location: 'before',
@@ -107,6 +111,12 @@ export default (props) => {
                 }
             });
         }
+    };
+
+    const setSelectedData = (groupData, subjectData) => {
+        setSelectedGroup(groupData);
+        setSelectedSubject(subjectData);
+        setSettingsDialogVisible(false);
     };
 
     /**
@@ -150,12 +160,16 @@ export default (props) => {
                     selectedGroup={selectedGroup} />
             </Dialog>
             <Dialog
-                title="Настройки"
+                title="Настройки журнала"
                 visible={settingsDialogVisible}
                 onHiding={setSettingsDialogVisible.bind(this, false)}
                 width={800}
                 height={750}>
-                <JournalSettings />
+                <JournalSettings
+                    visible={settingsDialogVisible}
+                    selectedSubjectData={selectedSubject}
+                    setSelectedSubjectData={setSelectedSubject}
+                    setSelectedData={setSelectedData} />
             </Dialog>
         </React.Fragment>
     )
