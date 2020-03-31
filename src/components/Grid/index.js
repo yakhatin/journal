@@ -43,29 +43,18 @@ export default (props) => {
             });
     }, []);
 
-    useEffect(() => {
-        if (!props.groupsDialogVisible) {
-            // refreshDataSource();
-        }
-    }, [selectedSubject.id, props.groupsDialogVisible]);
-
     /**
      * Добавление текущей даты в журнал
      */
-    const addNewColumnWithCurrDate = ({ item: dataType, id }) => {
+    const addNewColumnWithCurrDate = ({ item }) => {
         const currDate = getCurrentDate();
-
         if (columns.findIndex(el => el.dataField === currDate) < 0) {
             const nextColumns = produce(columns, draft => {
-                draft.push({ dataField: currDate, caption: currDate, alignment: 'center', width: 100, dataType });
+                draft.push({ dataField: currDate, caption: currDate, alignment: 'center', width: 100, dataType: item.value });
             })
             setColumns(nextColumns);
-            setSelectedScoreType(id);
+            setSelectedScoreType(item.id);
         }
-    };
-
-    const onDateAdd = ({ item }) => {
-        addNewColumnWithCurrDate(item);
     };
 
     /**
@@ -91,7 +80,7 @@ export default (props) => {
                     displayExpr: "name",
                     text: 'Добавить дату',
                     icon: 'add',
-                    onSelectionChanged: onDateAdd,
+                    onSelectionChanged: addNewColumnWithCurrDate,
                     items: [{
                         id: 1,
                         name: 'Посещаемость',
