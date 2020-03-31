@@ -4,6 +4,7 @@ import { post } from '../../meta/meta';
 export const useSettingsData = (readyToLoad = false) => {
     const [groups, setGroups] = useState([]);
     const [subjects, setSubjects] = useState([]);
+    const [subjectTypes, setSubjectTypes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -11,8 +12,10 @@ export const useSettingsData = (readyToLoad = false) => {
         try {
             const groupsData = await post('groups');
             const subjectsData = await post('subjects');
+            const subjectTypesData = await post('subject_types');
             setGroups(groupsData);
             setSubjects(subjectsData);
+            setSubjectTypes(subjectTypesData);
             setLoading(false);
         } catch (err) {
             setError(err.toString());
@@ -30,6 +33,7 @@ export const useSettingsData = (readyToLoad = false) => {
         error,
         loading,
         groups,
-        subjects
+        subjects,
+        subjectTypes
     };
 };

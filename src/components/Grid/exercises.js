@@ -5,7 +5,7 @@ import { getHeaderHeight, getCurrentDate } from './helpers';
 import './styles.css';
 
 export default (props) => {
-    const { selectedSubject, selectedGroup } = props;
+    const { selectedSubject, selectedGroup, selectedSubjectType } = props;
     const dataSourceId = `exercises_${selectedSubject.id}`;
 
     const [dataSource, setDataSource] = useState({});
@@ -61,7 +61,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.title} - Задания (${selectedGroup.name})`
+                text: `${selectedSubject.title} - ${selectedSubjectType.name} - Задания (${selectedGroup.name})`
             });
         }
     };

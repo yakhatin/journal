@@ -7,16 +7,18 @@ const JournalSettings = (props) => {
         visible,
         selectedGroupData,
         selectedSubjectData,
+        selectedSubjectTypeData,
         setSelectedData
     } = props;
 
     const [selectedGroup, setSelectedGroup] = useState(selectedGroupData);
     const [selectedSubject, setSelectedSubject] = useState(selectedSubjectData);
+    const [selectedSubjectType, setSelectedSubjectType] = useState(selectedSubjectTypeData);
 
-    const { error, loading, groups, subjects } = useSettingsData(visible);
+    const { error, loading, groups, subjects, subjectTypes } = useSettingsData(visible);
 
     const onApplyClick = () => {
-        setSelectedData(selectedGroup, selectedSubject);
+        setSelectedData(selectedGroup, selectedSubject, selectedSubjectType);
     }
 
     const onSelectionChanged = (type, { selectedItem }) => {
@@ -27,6 +29,10 @@ const JournalSettings = (props) => {
             }
             case 'subject': {
                 setSelectedSubject(selectedItem);
+                break;
+            }
+            case 'subjectTypes': {
+                setSelectedSubjectType(selectedItem);
                 break;
             }
             default: break;
@@ -67,6 +73,21 @@ const JournalSettings = (props) => {
                                     minSearchLength={0}
                                     showDataBeforeSearch={false}
                                     onSelectionChanged={onSelectionChanged.bind(this, 'subject')} />
+                            </div>
+                        </div>
+                        <div className="dx-field">
+                            <div className="dx-field-label">Тип предмета</div>
+                            <div className="dx-field-value">
+                                <SelectBox dataSource={subjectTypes}
+                                    valueExpr="id"
+                                    displayExpr="name"
+                                    searchEnabled={true}
+                                    searchMode="contains"
+                                    searchExpr="name"
+                                    searchTimeout={200}
+                                    minSearchLength={0}
+                                    showDataBeforeSearch={false}
+                                    onSelectionChanged={onSelectionChanged.bind(this, 'subjectTypes')} />
                             </div>
                         </div>
                         <Button

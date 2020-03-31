@@ -7,7 +7,7 @@ import { getHeaderHeight, getCurrentDate } from './helpers';
 import getDataSource from '../../meta/grid/dataSource';
 import './styles.css';
 import { post } from '../../meta/meta';
-import JournalSettings from './setting';
+import JournalSettings from './settings';
 
 export default (props) => {
     const { groupsDialogVisible } = props;
@@ -18,20 +18,25 @@ export default (props) => {
 
     const [selectedSubject, setSelectedSubject] = useState({
         id: 1,
-        title: 'Математика',
-        typeName: 'Лекция'
+        title: 'Математика'
     });
     const [selectedGroup, setSelectedGroup] = useState({
         id: 2,
         name: 'КТ-41-13'
     });
+    const [selectedSubjectType, setSelectedSubjectType] = useState({
+        id: 1,
+        name: 'Лекция'
+    });
 
     const subjectId = selectedSubject.id;
+    const subjectTypeId = selectedSubjectType.id;
     const groupId = selectedGroup.id;
 
     const params = {
         groupId,
         subjectId,
+        subjectTypeId,
         scoreType: selectedScoreType
     };
 
@@ -47,7 +52,7 @@ export default (props) => {
      */
     useEffect(() => {
         getColumns();
-    }, [selectedGroup, selectedSubject]);
+    }, [selectedGroup, selectedSubject, selectedSubjectType]);
 
     /**
      * Добавление текущей даты в журнал
@@ -100,7 +105,7 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                template: `<div class="journal-grid-title">${selectedSubject.title} - ${selectedSubject.typeName} (${selectedGroup.name})</div>`
+                template: `<div class="journal-grid-title">${selectedSubject.title} - ${selectedSubjectType.name} (${selectedGroup.name})</div>`
             });
             toolbarItems.unshift({
                 location: 'before',
@@ -113,9 +118,10 @@ export default (props) => {
         }
     };
 
-    const setSelectedData = (groupData, subjectData) => {
+    const setSelectedData = (groupData, subjectData, subjectTypeData) => {
         setSelectedGroup(groupData);
         setSelectedSubject(subjectData);
+        setSelectedSubjectType(subjectTypeData);
         setSettingsDialogVisible(false);
     };
 
@@ -157,7 +163,8 @@ export default (props) => {
                 <Exercises
                     groupsDialogVisible={groupsDialogVisible}
                     selectedSubject={selectedSubject}
-                    selectedGroup={selectedGroup} />
+                    selectedGroup={selectedGroup}
+                    selectedSubjectType={selectedSubjectType} />
             </Dialog>
             <Dialog
                 title="Настройки журнала"
@@ -169,6 +176,7 @@ export default (props) => {
                     visible={settingsDialogVisible}
                     selectedSubjectData={selectedSubject}
                     setSelectedSubjectData={setSelectedSubject}
+                    selectedSubjectTypeData={selectedSubjectType}
                     setSelectedData={setSelectedData} />
             </Dialog>
         </React.Fragment>
