@@ -7,12 +7,14 @@ import { getHeaderHeight, getCurrentDate } from './helpers';
 import getDataSource from '../../meta/grid/dataSource';
 import './styles.css';
 import { post } from '../../meta/meta';
+import JournalSettings from './setting';
 
 export default (props) => {
     const { groupsDialogVisible } = props;
     const [columns, setColumns] = useState([]);
     const [selectedScoreType, setSelectedScoreType] = useState(null);
     const [exercisesDialogVisible, setExercisesDialogVisible] = useState(false);
+    const [settingsDialogVisible, setSettingsDialogVisible] = useState(false);
 
     const [selectedSubject, setSelectedSubject] = useState({
         id: 1,
@@ -94,7 +96,15 @@ export default (props) => {
             });
             toolbarItems.unshift({
                 location: 'before',
-                text: `${selectedSubject.name} - ${selectedSubject.typeName} (${selectedGroup.name})`
+                template: `<div class="journal-grid-title">${selectedSubject.name} - ${selectedSubject.typeName} (${selectedGroup.name})</div>`
+            });
+            toolbarItems.unshift({
+                location: 'before',
+                widget: 'dxButton',
+                options: {
+                    icon: 'preferences',
+                    onClick: setSettingsDialogVisible.bind(this, true)
+                }
             });
         }
     };
@@ -138,6 +148,14 @@ export default (props) => {
                     groupsDialogVisible={groupsDialogVisible}
                     selectedSubject={selectedSubject}
                     selectedGroup={selectedGroup} />
+            </Dialog>
+            <Dialog
+                title="Настройки"
+                visible={settingsDialogVisible}
+                onHiding={setSettingsDialogVisible.bind(this, false)}
+                width={800}
+                height={750}>
+                <JournalSettings />
             </Dialog>
         </React.Fragment>
     )

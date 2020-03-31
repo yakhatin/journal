@@ -28,30 +28,6 @@ export default (props) => {
     };
 
     /**
-     * Обработчик события создания новой записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowInserted = (e) => {
-        updateGroupData(e.data, groupId, groupName, 'insert')
-    };
-
-    /**
-     * Обработчик события удаления записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowRemoved = (e) => {
-        updateGroupData(e.data, groupId, groupName, 'delete');
-    };
-
-    /**
-     * Обработчик события изменения записи
-     * @param {*} e - данные из DxDataGrid
-     */
-    const onRowUpdated = (e) => {
-        updateGroupData(e.data, groupId, groupName, 'update');
-    };
-
-    /**
      * Обработчик события инициализации тулбара
      * @param {*} e - данные из DxDataGrid
      */
@@ -83,7 +59,7 @@ export default (props) => {
             <DataGrid
                 onToolbarPreparing={onToolbarPreparing}
                 columns={[{ dataField: 'name', caption: 'ФИО' }]}
-                dataSource={getDataSource('students', 'id', params)}
+                dataSource={props.visible ? getDataSource('students', 'id', params) : []}
                 editing={{
                     mode: 'batch',
                     useIcons: true,

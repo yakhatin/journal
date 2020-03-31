@@ -23,7 +23,7 @@ export default (props) => {
             <React.Fragment>
                 <DataGrid
                     columns={[{ caption: 'Наименование группы', dataField: 'name' }]}
-                    dataSource={getDataSource('groups')}
+                    dataSource={props.visible ? getDataSource('groups') : []}
                     onRowDblClick={onRowDblClick}
                     hoverStateEnabled={true}
                     editing={{

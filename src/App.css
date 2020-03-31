@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+.journal-grid-title {
+  margin-left: 5px;
+  font-size: 14pt;
+}
