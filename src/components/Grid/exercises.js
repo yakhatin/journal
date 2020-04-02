@@ -1,27 +1,54 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, TextBox, Button } from 'devextreme-react';
 import Dialog from '../Popup';
-import { getHeaderHeight, getCurrentDate } from './helpers';
+import getDataSource from '../../meta/grid/dataSource';
+import { post } from '../../meta/meta';
 import './styles.css';
 
 export default (props) => {
-    const { selectedSubject, selectedGroup, selectedSubjectType } = props;
-    const dataSourceId = `exercises_${selectedSubject.id}`;
+    const {
+        selectedSubject,
+        selectedGroup,
+        selectedSubjectType,
+        journalParams,
+        visible
+    } = props;
 
-    const [dataSource, setDataSource] = useState({});
     const [newExerciseDialogVisible, setNewExerciseDialogVisible] = useState(false);
     const [exerciseName, setExerciseName] = useState(null);
+    const [columns, setColumns] = useState([]);
 
-    useEffect(() => {
-        if (!props.groupsDialogVisible) {
-            refreshDataSource();
+    const params = {
+        ...journalParams,
+        isExercise: true
+    };
+
+    const getColumns = () => {
+        if (visible) {
+            post('journal/columns', params)
+                .then(result => {
+                    setColumns(result);
+                });
         }
-    }, [selectedSubject.id, props.groupsDialogVisible]);
+    }
 
     /**
-     * Ссылка на свойства компонента DxDataGrid
+     * Загрузка колонок
      */
-    let gridRef = useRef(null);
+    useEffect(() => {
+        getColumns();
+    }, [
+        visible,
+        selectedGroup,
+        selectedSubject,
+        selectedSubjectType
+    ]);
+
+    useEffect(() => {
+        if (!visible) {
+            setColumns([]);
+        }
+    }, [visible]);
 
     /**
      * Добавление текущей даты в журнал
@@ -36,11 +63,6 @@ export default (props) => {
         // }
 
         // refreshDataSource();
-    };
-
-    const refreshDataSource = () => {
-        // const { dataSource: storedDataSource } = getDataSource(dataSourceId, group);
-        // setDataSource(storedDataSource);
     };
 
     /**
@@ -77,16 +99,11 @@ export default (props) => {
         setNewExerciseDialogVisible(false);
     };
 
-    /**
-     * Вычисление высоты верхнего меню 
-     */
-    const headerHeight = getHeaderHeight();
-
     return (
         <React.Fragment>
             <DataGrid
-                ref={ref => gridRef = ref}
-                dataSource={dataSource}
+                columns={columns}
+                dataSource={(visible && columns.length > 0) ? getDataSource('journal', null, params) : []}
                 onToolbarPreparing={onToolbarPreparing}
                 allowColumnResizing={true}
                 columnAutoWidth={true}

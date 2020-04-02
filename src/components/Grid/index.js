@@ -161,10 +161,12 @@ export default (props) => {
                 width={800}
                 height={750}>
                 <Exercises
+                    visible={exercisesDialogVisible}
                     groupsDialogVisible={groupsDialogVisible}
                     selectedSubject={selectedSubject}
                     selectedGroup={selectedGroup}
-                    selectedSubjectType={selectedSubjectType} />
+                    selectedSubjectType={selectedSubjectType}
+                    journalParams={params} />
             </Dialog>
             <Dialog
                 title="Настройки журнала"
