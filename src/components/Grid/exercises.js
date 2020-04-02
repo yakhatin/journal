@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { DataGrid, Button, SelectBox, LoadPanel } from 'devextreme-react';
-import Dialog from '../Popup';
+import { DataGrid } from 'devextreme-react';
+import produce from "immer";
 import getDataSource from '../../meta/grid/dataSource';
 import { post } from '../../meta/meta';
 import './styles.css';
-import { useSettingsData } from './hooks';
+import AddExerciseForm from './addExerciseForm';
 
 export default (props) => {
     const {
@@ -16,14 +16,13 @@ export default (props) => {
     } = props;
 
     const [newExerciseDialogVisible, setNewExerciseDialogVisible] = useState(false);
-    const [exerciseName, setExerciseName] = useState(null);
+    const [selectedScoreType, setSelectedScoreType] = useState(null);
     const [columns, setColumns] = useState([]);
-
-    const { loading, scoreTypes } = useSettingsData(newExerciseDialogVisible, { scoreTypes: true });
 
     const params = {
         ...journalParams,
-        isExercise: true
+        isExercise: true,
+        scoreType: selectedScoreType
     };
 
     const getColumns = () => {
@@ -56,16 +55,19 @@ export default (props) => {
     /**
      * Добавление текущей даты в журнал
      */
-    const addNewColumnWithExercise = () => {
-        // const dataField = createId();
-        // const { columns } = getDataSource(dataSourceId);
+    const addNewColumnWithExercise = (scoreData, dataField) => {
+        if (columns.findIndex(el => el.dataField === dataField) < 0) {
+            const nextColumns = produce(columns, draft => {
+                draft.push({ dataField: dataField, caption: dataField, alignment: 'center', width: 100, dataType: scoreData.name });
+            })
+            setColumns(nextColumns);
+            setSelectedScoreType(scoreData.id);
+        }
+    };
 
-        // if (columns.findIndex(el => el.dataField === dataField) < 0) {
-        //     columns.push({ dataField: dataField, caption: exerciseName, alignment: 'center', width: 250, dataType: 'boolean' });
-        //     updateColumns(columns, dataSourceId);
-        // }
-
-        // refreshDataSource();
+    const onAddClick = (scoreType, exerciseName) => {
+        setNewExerciseDialogVisible(false);
+        addNewColumnWithExercise(scoreType, exerciseName);
     };
 
     /**
@@ -91,20 +93,8 @@ export default (props) => {
         }
     };
 
-    const onExerciseNameChanged = ({ event }) => {
-        if (event.target) {
-            setExerciseName(event.target.value);
-        }
-    }
-
-    const onSaveClick = () => {
-        addNewColumnWithExercise();
-        setNewExerciseDialogVisible(false);
-    };
-
     return (
         <React.Fragment>
-            <LoadPanel visible={newExerciseDialogVisible && loading} />
             <DataGrid
                 columns={columns}
                 dataSource={(visible && columns.length > 0) ? getDataSource('journal', null, params) : []}
@@ -122,60 +112,10 @@ export default (props) => {
                     fileName: new Date().valueOf()
                 }}
             />
-            <Dialog
-                title="Новое задание"
+            <AddExerciseForm
                 visible={newExerciseDialogVisible}
-                onHiding={setNewExerciseDialogVisible.bind(this, false)}
-                width={700}
-                height={700}>
-                <div className="d-flex flex-grow-1 flex-column">
-                    <div className="d-flex flex-grow-1 flex-column">
-                        <div className="dx-field">
-                            <div className="dx-field-label">Тип задания</div>
-                            <div className="dx-field-value">
-                                <SelectBox
-                                    dataSource={scoreTypes}
-                                    valueExpr="id"
-                                    displayExpr="description"
-                                    searchEnabled={true}
-                                    searchMode="contains"
-                                    searchExpr="description"
-                                    searchTimeout={200}
-                                    minSearchLength={0}
-                                    showDataBeforeSearch={false}
-                                    onSelectionChanged={e => console.log(e)} />
-                            </div>
-                        </div>
-                        <DataGrid
-                            columns={[{ dataField: 'name', caption: 'Наименование задания' }]}
-                            dataSource={visible ? getDataSource('exercises') : []}
-                            height={520}
-                            selection={{
-                                mode: 'single',
-                                showCheckBoxesMode: true
-                            }}
-                            editing={{
-                                allowAdding: true,
-                                allowUpdating: true,
-                                allowDeleting: true,
-                                mode: 'batch',
-                                useIcons: true
-                            }}
-                        />
-                    </div>
-                    <div className="mt-10">
-                        <Button
-                            text="Добавить"
-                            icon="add"
-                            onClick={onSaveClick} />
-                        <Button
-                            className="ml-10"
-                            text="Отмена"
-                            icon="close"
-                            onClick={setNewExerciseDialogVisible.bind(this, false)} />
-                    </div>
-                </div>
-            </Dialog>
+                setVisible={setNewExerciseDialogVisible}
+                onAddClick={onAddClick} />
         </React.Fragment>
     )
 };
